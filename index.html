@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>The Psychic Game</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+</head>
+
+<body>
+    <h1>The Psychic Game</h1>
+    <h3 class="mb-5">Guess what letter I'm thinking of</h3>
+    <div class="control-group">
+        <p id="wins">Wins: </p>
+        <p id="losses">Losses: </p>
+        <p id="guess_count">Guesses Left: </p>
+        <p id="guesses">Your Guesses so far: </p>
+    </div>
+
+    <script>
+
+        // pick a random char
+        function rand_char() {
+            var upper_bound = 25, lower_bound = 0;
+            var random_number = Math.floor(Math.random() * (upper_bound - lower_bound) + lower_bound);
+            var chr = String.fromCharCode(97 + random_number);
+            return chr;
+        }
+
+        // reset the game
+        function reset_game() {
+            guesses_left = 13;
+            guesses = [];
+            the_char = rand_char();
+        }
+
+        // update visual elements
+        function update_vis() {
+            console.log ("updating vis")
+            $("#wins").text("Wins: " + String(wins));
+            $("#losses").text("Losses: " + String(losses));
+            $("#guess_count").text("Guesses Left: " + String(guesses_left));
+            $("#guesses").text("Your Guesses so far: " + String(guesses));
+            console.log(guesses);
+        }
+
+        // init
+        var wins = 0, losses = 0;
+        var guesses_left = 13;
+        var guesses = [];
+        var the_char = rand_char();
+        update_vis();
+
+        // main event
+        $(document).keyup(function (event) {
+            console.log("keypress: " + String(event.keyCode));
+
+            //error handling
+            if (event.keyCode<65 || event.keyCode>90){
+                console.log("bad keypress");
+                alert("Oops! try a letter");
+                return false;
+            }
+            if (guesses.indexOf(event.key) >= 0)
+            {
+                console.log("char already attempted");
+                alert("char already attempted");
+                return false;
+            }
+
+            // incorrect guess
+            if (event.key != the_char) {
+                console.log ('bad guess');
+                guesses_left -= 1;
+                guesses.push(event.key);
+
+                // game over
+                if (guesses_left < 1) {
+                    console.log("game over");
+                    losses += 1;
+                    reset_game();
+                }
+            }
+            else { // correct guess
+                console.log("good guess");
+                wins += 1;
+                reset_game();
+            }
+            
+            //bookkeeping
+            update_vis();
+            return true;
+
+        });
+    </script>
+
+</body>
+
+</html>
